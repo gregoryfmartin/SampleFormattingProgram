@@ -202,6 +202,26 @@ const console_cursor_pos_t UI_MESSAGEWINDOW_HORIZTOP_POS = UI_MESSAGEWINDOW_TOPL
 const console_cursor_pos_t UI_MESSAGEWINDOW_HORIZBOT_POS = std::make_tuple<ui16, ui16>((UI_MESSAGEWINDOW_HEIGHT + 0), (UI_MESSAGEWINDOW_LEFT + 0));
 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// UI SCENE WINDOW VARIABLES 
+//
+///////////////////////////////////////////////////////////////////////////////
+const console_color_t UI_SCENEWINDOW_BORDER_COLOR = CONSOLE_COLOR_WHITE;
+const console_color_t UI_SCENEWINDOW_BLANK_COLOR = CONSOLE_COLOR_BLACK;
+const std::string UI_SCENEWINDOW_BORDER_HORIZONTAL = "@--------------------------------------@";
+const std::string UI_SCENEWINDOW_BORDER_VERTICAL = "|";
+const std::string UI_SCENEWINDOW_BLANK = "                                      ";
+//const ui16 UI_SCENEWINDOW_WIDTH = 40;
+const ui16 UI_SCENEWINDOW_TOP = SCREEN_ORIGIN_Y;
+const ui16 UI_SCENEWINDOW_LEFT = SCREEN_COLS - 40;
+const ui16 UI_SCENEWINDOW_WIDTH = UI_SCENEWINDOW_LEFT + 39;
+const ui16 UI_SCENEWINDOW_HEIGHT = UI_MESSAGEWINDOW_TOP - 1;
+const console_cursor_pos_t UI_SCENEWINDOW_TOPLEFT = std::make_tuple<ui16, ui16>((UI_SCENEWINDOW_TOP + 0), (UI_SCENEWINDOW_LEFT + 0));
+const console_cursor_pos_t UI_SCENEWINDOW_BOTTOMRIGHT = std::make_tuple<ui16, ui16>((UI_SCENEWINDOW_HEIGHT + 0), (UI_SCENEWINDOW_WIDTH + 0));
+const console_cursor_pos_t UI_SCENEWINDOW_HORIZTOP_POS = UI_SCENEWINDOW_TOPLEFT;
+const console_cursor_pos_t UI_SCENEWINDOW_HORIZBOT_POS = std::make_tuple<ui16, ui16>((UI_SCENEWINDOW_HEIGHT + 0), (UI_SCENEWINDOW_LEFT + 0));
+
 
 
 
@@ -527,6 +547,29 @@ void ui_messagewindow_draw() {
 #endif
 }
 
+void ui_scenewindow_draw() {
+#ifdef _WIN32
+    std::string horizontal_borders = std::format("{}{}{}{}",
+        gen_console_cursorpos_str(UI_SCENEWINDOW_HORIZTOP_POS),
+        gen_console_color_str(UI_SCENEWINDOW_BORDER_COLOR, CONSOLE_COLOR_BLACK, UI_SCENEWINDOW_BORDER_HORIZONTAL),
+        gen_console_cursorpos_str(UI_SCENEWINDOW_HORIZBOT_POS),
+        gen_console_color_str(UI_SCENEWINDOW_BORDER_COLOR, CONSOLE_COLOR_BLACK, UI_SCENEWINDOW_BORDER_HORIZONTAL));
+    std::string vertical_left_border, vertical_right_border;
+
+    for (ui16 a = (UI_SCENEWINDOW_TOP + 1); a < UI_SCENEWINDOW_HEIGHT; a++) {
+        vertical_left_border += std::format("{}{}",
+            gen_console_cursorpos_str(std::make_tuple<ui16, ui16>((a + 0), (UI_SCENEWINDOW_LEFT + 0))),
+            gen_console_color_str(UI_SCENEWINDOW_BORDER_COLOR, CONSOLE_COLOR_BLACK, UI_SCENEWINDOW_BORDER_VERTICAL));
+        vertical_right_border += std::format("{}{}",
+            gen_console_cursorpos_str(std::make_tuple<ui16, ui16>((a + 0), (UI_SCENEWINDOW_WIDTH + 0))),
+            gen_console_color_str(UI_SCENEWINDOW_BORDER_COLOR, CONSOLE_COLOR_BLACK, UI_SCENEWINDOW_BORDER_VERTICAL));
+    }
+
+    std::cout << horizontal_borders << vertical_left_border << vertical_right_border;
+#else
+#endif
+}
+
 int main(int argc, char** argv) {
     // Attempt to clear the screen using the CSI
     std::cout << "\033[2J";
@@ -543,6 +586,8 @@ int main(int argc, char** argv) {
     ui_commandwindow_draw();
 
     ui_messagewindow_draw();
+
+    ui_scenewindow_draw();
 
     //std::cout << getenv("COLORTERM") << std::endl;
 
